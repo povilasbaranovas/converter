@@ -18,6 +18,7 @@ export const Input = ({
 			<div className="relative">
 				<input
 					{...props}
+					aria-label={`${props.name}-input`}
 					className={cn(
 						"w-full border-b-1 border-border text-primary text-2xl px-2 pr-8 py-1 focus:outline-none",
 						className,

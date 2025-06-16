@@ -1,3 +1,4 @@
+import "@testing-library/jest-dom";
 import { mswServer } from "@/msw/msw.server";
 import { vi } from "vitest";
 
@@ -13,3 +14,7 @@ afterEach(() => {
 	expect(onUnhandledRequest).not.toHaveBeenCalled();
 	onUnhandledRequest.mockClear();
 });
+
+window.HTMLElement.prototype.hasPointerCapture = vi.fn();
+window.HTMLElement.prototype.setPointerCapture = vi.fn();
+window.HTMLElement.prototype.scrollIntoView = vi.fn();

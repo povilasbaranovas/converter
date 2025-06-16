@@ -38,7 +38,10 @@ export const CurrencySelect = ({ name, label }: CurrencySelectProps) => {
 						>
 							<SelectTrigger className="w-[180px] ">
 								{isLoading ? (
-									<LoaderCircle className="animate-spin" />
+									<LoaderCircle
+										className="animate-spin"
+										data-testid="countries-loading"
+									/>
 								) : (
 									<SelectValue />
 								)}

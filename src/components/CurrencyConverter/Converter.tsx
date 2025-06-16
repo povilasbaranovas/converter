@@ -1,75 +1,30 @@
 "use client";
-import { useCurrencyConversion } from "@/services/currency.service/currency.service";
 import { ArrowRightLeft, LoaderCircle } from "lucide-react";
 import Button from "../Button";
 
-import { ApiGetFxRates } from "@/services/api";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider } from "react-hook-form";
 import { CurrencySelect } from "./components/CurrencySelect";
 
 import { cn } from "@/utils/cn";
-import { useEffect } from "react";
 import { Input } from "../Inputs/Input";
 import { CurrencySelectFooter } from "./components/CurrencySelectFooter";
-
-export type CurrencyFormFields = ApiGetFxRates["RequestQuery"] & {
-	toAmount: string;
-	swapped: boolean;
-	fieldToUpdate: keyof Pick<CurrencyFormFields, "amount" | "toAmount">;
-};
+import { useCurrencyConversionForm } from "./converter.hooks";
 
 export function Converter() {
-	const formMethods = useForm<CurrencyFormFields>({
-		mode: "onChange",
-		defaultValues: {
-			amount: "1",
-			from: "EUR",
-			to: "GBP",
-			toAmount: "",
-			swapped: false,
-			fieldToUpdate: "toAmount",
+	const {
+		form: {
+			formMethods,
+			values: { leftSelectName, rightSelectName, from, to, swapped },
 		},
-	});
+		query: { isError, isLoading, data },
+	} = useCurrencyConversionForm();
 
 	const {
 		handleSubmit,
 		register,
 		setValue,
-		watch,
-		formState: { isSubmitted, isDirty, isValid },
+		formState: { isSubmitted, isValid },
 	} = formMethods;
-
-	const {
-		amount,
-		from: fromField,
-		to: toField,
-		toAmount,
-		fieldToUpdate,
-		swapped,
-	} = watch();
-
-	const { from, to, leftSelectName, rightSelectName } = {
-		leftSelectName: swapped ? "to" : "from",
-		rightSelectName: swapped ? "from" : "to",
-		from: swapped ? toField : fromField,
-		to: swapped ? fromField : toField,
-	} as const;
-
-	const { data, isError, isLoading, isFetching } = useCurrencyConversion({
-		deps: [fieldToUpdate, swapped],
-		values: {
-			amount: fieldToUpdate === "toAmount" ? amount : toAmount,
-			from,
-			to,
-		},
-		enabled: isSubmitted,
-	});
-
-	useEffect(() => {
-		if (!isFetching && data?.toAmount) {
-			setValue(fieldToUpdate, data?.toAmount?.toString());
-		}
-	}, [data?.toAmount, isFetching, fieldToUpdate, setValue]);
 
 	return (
 		<FormProvider {...formMethods}>
@@ -141,21 +96,20 @@ export function Converter() {
 					) : null}
 				</div>
 
-				{isLoading || data ? (
+				{data ? (
 					<CurrencySelectFooter>
-						{from} ={" "}
-						{isLoading ? (
-							<LoaderCircle className="animate-spin w-4 h-4 text-text-secondary" />
-						) : (
-							`${data?.rate.toFixed(4)} ${to}`
-						)}
+						<div>
+							{`${from} = ${
+								isLoading ? (
+									<LoaderCircle className="animate-spin w-4 h-4 text-text-secondary" />
+								) : (
+									`${data?.rate} ${to}`
+								)
+							}`}
+						</div>
 					</CurrencySelectFooter>
 				) : (
-					<Button
-						size="large"
-						type="submit"
-						disabled={!isValid || !isDirty}
-					>
+					<Button size="large" type="submit" disabled={!isValid}>
 						{isLoading ? "Converting..." : "Convert"}
 					</Button>
 				)}

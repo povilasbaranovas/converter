@@ -8,17 +8,19 @@ export const currencyConversionHandlers = [
 		ApiGetFxRates["RequestQuery"],
 		DefaultBodyType,
 		ApiGetFxRates["ResponseBody"]
-	>(createEndpoint("fxRates"), () =>
-		HttpResponse.json({
+	>(createEndpoint("fxRates"), ({ params: { amount } }) => {
+		const rate = 2;
+
+		return HttpResponse.json({
 			from: faker.helpers.arrayElement(
 				Object.values(CURRENCIES).map(({ code }) => code),
 			),
 			to: faker.helpers.arrayElement(
 				Object.values(CURRENCIES).map(({ code }) => code),
 			),
-			fromAmount: faker.number.int({ min: 1, max: 1000 }),
-			rate: faker.number.float({ min: 0.1, max: 10 }),
-			toAmount: faker.number.int({ min: 1, max: 1000 }),
-		}),
-	),
+			fromAmount: Number(amount),
+			toAmount: Number(amount) * rate,
+			rate,
+		});
+	}),
 ];
