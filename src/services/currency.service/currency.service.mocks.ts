@@ -8,7 +8,9 @@ export const currencyConversionHandlers = [
 		ApiGetFxRates["RequestQuery"],
 		DefaultBodyType,
 		ApiGetFxRates["ResponseBody"]
-	>(createEndpoint("fxRates"), ({ params: { amount } }) => {
+	>(createEndpoint("fxRates"), ({ request }) => {
+		const url = new URL(request.url);
+		const amount = url.searchParams.get("amount");
 		const rate = 2;
 
 		return HttpResponse.json({

@@ -5,7 +5,6 @@ import React from "react";
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	children: React.ReactNode;
 	variant?: "primary" | "invisible";
-	size?: "small" | "medium" | "large";
 };
 
 const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
@@ -25,7 +24,7 @@ export default function Button({
 		<button
 			{...props}
 			className={cn(
-				"px-4 py-2 cursor-pointer rounded font-semibold disabled:opacity-50 disabled:cursor-not-allowed",
+				"px-4 py-2 flex items-center justify-center cursor-pointer rounded font-semibold disabled:opacity-50 disabled:cursor-not-allowed",
 				variantClasses[variant],
 				className,
 			)}

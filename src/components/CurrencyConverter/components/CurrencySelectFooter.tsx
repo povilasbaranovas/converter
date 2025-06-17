@@ -5,7 +5,7 @@ export type CurrencySelectFooterProps = { children: React.ReactNode };
 
 export function CurrencySelectFooter({ children }: CurrencySelectFooterProps) {
 	return (
-		<footer className="mt-4 text-sm flex flex-col gap-2">
+		<footer className="text-sm flex flex-col gap-2">
 			<div className="flex items-center gap-2">
 				<span className="text-warning text-lg ">
 					<CircleIcon className="w-3 h-3" />

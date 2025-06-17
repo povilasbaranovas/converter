@@ -14,8 +14,18 @@
 
 	--color-button-primary-bg: var(--color-success);
 	--color-button-primary-text: var(--color-background);
-	--color-button-invisible-hover: #e5e7eb;
-	--color-button-invisible-focus: #d1d5db;
+	--color-button-invisible-hover: #eee;
+	--color-button-invisible-focus: #eee;
+	--color-select-focus: #eee;
 
 	--font-sans: var(--font-geist-sans);
+}
+
+input[type="number"] {
+	-moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
 }

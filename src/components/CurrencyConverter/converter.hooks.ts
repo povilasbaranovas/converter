@@ -8,10 +8,16 @@ import { useForm } from "react-hook-form";
 
 export const useCurrencyConversionForm = () => {
 	const formMethods = useForm<CurrencyFormFields>({
-		mode: "onChange",
+		mode: "onTouched",
 		defaultValues: DEFAULT_CURRENCY_VALUES,
 	});
 
+	const {
+		watch,
+		setValue,
+		formState: { isSubmitted, isValid, isValidating, errors },
+	} = formMethods;
+	console.log(errors, isValid);
 	const {
 		amount,
 		from,
@@ -19,27 +25,35 @@ export const useCurrencyConversionForm = () => {
 		leftSelectName,
 		rightSelectName,
 		fieldToUpdate,
-		swapped,
-	} = convertCurrencyValues(formMethods.watch());
+		isCurrencySwapped,
+	} = convertCurrencyValues(watch());
 
 	const query = useCurrencyConversion({
-		deps: [fieldToUpdate, swapped],
+		deps: [fieldToUpdate, isCurrencySwapped],
 		values: {
 			amount,
 			from,
 			to,
 		},
-		enabled: formMethods.formState.isSubmitted,
+		enabled: isSubmitted && isValid && !isValidating,
 	});
 
 	useEffect(() => {
-		if (!query.isFetching && query.data?.toAmount) {
-			formMethods.setValue(
-				fieldToUpdate,
-				query.data?.toAmount?.toString(),
-			);
+		const amount = query.data?.toAmount?.toString();
+
+		if (!query.isFetching && amount && !isValidating) {
+			setValue(fieldToUpdate, amount, {
+				shouldDirty: true,
+				shouldValidate: true,
+			});
 		}
-	}, [query.data?.toAmount, query.isFetching, fieldToUpdate, formMethods]);
+	}, [
+		query.data?.toAmount,
+		query.isFetching,
+		isValidating,
+		fieldToUpdate,
+		setValue,
+	]);
 
 	return {
 		query,
@@ -52,7 +66,7 @@ export const useCurrencyConversionForm = () => {
 				rightSelectName,
 				amount,
 				fieldToUpdate,
-				swapped,
+				isCurrencySwapped,
 			},
 		},
 	};

@@ -12,7 +12,7 @@ import {
 } from "../../Inputs/Select/Select";
 import { InputWrapper } from "@/components/Inputs/InputWrapper";
 import { LoaderCircle } from "lucide-react";
-import { CurrencyFormFields } from "../Converter";
+import { CurrencyFormFields } from "../converter.types";
 
 type CurrencySelectProps = {
 	label: string;
@@ -21,7 +21,7 @@ type CurrencySelectProps = {
 
 export const CurrencySelect = ({ name, label }: CurrencySelectProps) => {
 	const { data, isLoading } = useGetCurrencies();
-	const { control } = useFormContext<CurrencyFormFields>();
+	const { control, setValue } = useFormContext<CurrencyFormFields>();
 
 	return (
 		<InputWrapper label={label} key={name + label}>
@@ -33,10 +33,13 @@ export const CurrencySelect = ({ name, label }: CurrencySelectProps) => {
 					return (
 						<Select
 							disabled={isLoading}
-							onValueChange={onChange}
+							onValueChange={(value) => {
+								onChange(value);
+								setValue("fieldToUpdate", "convertedAmount");
+							}}
 							{...field}
 						>
-							<SelectTrigger className="w-[180px] ">
+							<SelectTrigger className="w-full ">
 								{isLoading ? (
 									<LoaderCircle
 										className="animate-spin"
@@ -53,7 +56,10 @@ export const CurrencySelect = ({ name, label }: CurrencySelectProps) => {
 										value={code}
 										data-testid={`option-${code}`}
 									>
-										{flag} {code}
+										<span className="text-3xl">
+											{flag}{" "}
+										</span>{" "}
+										<span>{code}</span>
 									</SelectItem>
 								))}
 							</SelectContent>

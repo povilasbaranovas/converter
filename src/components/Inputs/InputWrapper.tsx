@@ -13,7 +13,7 @@ export const InputWrapper = ({
 }: InputWrapperProps) => {
 	return (
 		<label
-			className={cn("w-[180px] flex flex-col justify-center", className)}
+			className={cn("w-[200px] flex flex-col justify-center", className)}
 		>
 			<span className="text-xs text-text-secondary ">{label}</span>
 			{children}

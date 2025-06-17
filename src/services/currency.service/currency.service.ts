@@ -14,23 +14,11 @@ export const CurrenciesQueryKeys = createQueryKeys("currency", {
 			});
 		},
 	}),
-	limits: () => ({
-		queryKey: ["limits"],
-		queryFn: () => {
-			return new Promise((resolve) => {
-				setTimeout(() => {
-					return resolve({
-						PLN: 20000,
-						EUR: 5000,
-						GBP: 1000,
-						UAH: 50000,
-					});
-				}, 1000);
-			});
-		},
-	}),
-	conversion: (values: ApiGetFxRates["RequestQuery"], deps: unknown[]) => ({
-		queryKey: [values, deps],
+	conversion: (
+		values: ApiGetFxRates["RequestQuery"],
+		deps: (string | boolean)[],
+	) => ({
+		queryKey: [values, ...deps],
 		queryFn: () => API.getFxRates(values),
 	}),
 });
@@ -40,16 +28,11 @@ export const useGetCurrencies = () => {
 		...CurrenciesQueryKeys.currencies(),
 	});
 };
-export const useGetLimit = () => {
-	return useQuery({
-		...CurrenciesQueryKeys.limits(),
-	});
-};
 
 type UseCurrencyConversionParams = {
 	enabled?: boolean;
 	values: ApiGetFxRates["RequestQuery"];
-	deps: unknown[];
+	deps: (string | boolean)[];
 };
 
 export const useCurrencyConversion = ({

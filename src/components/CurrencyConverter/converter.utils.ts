@@ -2,32 +2,34 @@ import { CurrencyFormFields } from "./converter.types";
 
 export const convertCurrencyValues = ({
 	amount: amountField,
+	convertedAmount,
 	fieldToUpdate,
 	from,
-	swapped,
 	to,
-	toAmount,
+	isCurrencySwapped,
 }: CurrencyFormFields) => {
-	const rest = {
-		amount: fieldToUpdate === "toAmount" ? amountField : toAmount,
-		swapped,
-		fieldToUpdate,
-	};
+	const fieldNames = {
+		leftSelectName: isCurrencySwapped ? "to" : "from",
+		rightSelectName: isCurrencySwapped ? "from" : "to",
+	} as const;
 
-	if (swapped) {
-		return {
-			leftSelectName: "to",
-			rightSelectName: "from",
-			from: to,
-			to: from,
-			...rest,
-		} as const;
-	}
+	const fieldBasedValues =
+		fieldToUpdate === "convertedAmount"
+			? {
+					from: isCurrencySwapped ? to : from,
+					to: isCurrencySwapped ? from : to,
+					amount: amountField,
+			  }
+			: {
+					from: isCurrencySwapped ? from : to,
+					to: isCurrencySwapped ? to : from,
+					amount: convertedAmount,
+			  };
+
 	return {
-		leftSelectName: "from",
-		rightSelectName: "to",
-		from,
-		to,
-		...rest,
+		isCurrencySwapped,
+		fieldToUpdate,
+		...fieldNames,
+		...fieldBasedValues,
 	} as const;
 };
